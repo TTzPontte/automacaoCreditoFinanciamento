@@ -1,7 +1,7 @@
 from PIL import Image
 from PyPDF2 import PdfFileReader, PdfFileMerger
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
 import os 
 list = {}
 
