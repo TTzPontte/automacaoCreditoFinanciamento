@@ -122,8 +122,10 @@ def atualizarBase(pathDestino):
     driver.close()
 
 #################  FINAL FUNÇÕES DO SCRIPT ###################
-
-fazerLogin()
+try:
+    fazerLogin()
+except:
+    pass
 pathOrigem = rf"C:\Users\{usuario}\Downloads\relatório_automação_crédito_{data_atual}.xlsx"
 
 def finalAtualizacao():

@@ -12,7 +12,7 @@ import pickle
 #Caminho para iniciar ChromeDriver
 options = webdriver.ChromeOptions() 
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-options.add_argument("--headless")
+#options.add_argument("--headless")
 driver = webdriver.Chrome(options=options,executable_path=r'G:\Drives compartilhados\Pontte\Operações\Automações\contaQI\Driver\chromedriver.exe')
 
 def fazerLogin():
@@ -38,7 +38,10 @@ def fazerLogin():
     sleep(2)
 def listarAnexos(linkDoPipefy, pathClient):
     #Fazer Login
-    fazerLogin()
+    try:
+        fazerLogin()
+    except:
+        pass
     sleep(5)
     #Entrar no Card do Cliente
     driver.get(linkDoPipefy)
@@ -183,5 +186,4 @@ def listarAnexos(linkDoPipefy, pathClient):
     keyValue['Fotos do imóvel'] = listaAnexoFotoImovel
         
     #Retornar dicionáiro com os anexos
-    driver.close()
     return keyValue

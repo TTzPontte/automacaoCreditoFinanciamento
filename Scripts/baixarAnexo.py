@@ -42,7 +42,12 @@ def fazerLogin():
     sleep(2)
 
 def baixarEMover(pathDestino, dict, nome1, cpf1, nome2, cpf2):
-    statusPDF = 0 
+    statusPDF = 0
+    try:
+        fazerLogin()
+    except: 
+        print('Login feito')
+
     sleep(5)
     for nomeChave in dict.keys():
         for nomeValor in dict[nomeChave]:
@@ -123,8 +128,6 @@ def baixarEMover(pathDestino, dict, nome1, cpf1, nome2, cpf2):
 
                 
     
-    driver.close()
 
-fazerLogin()
 
 #Final
