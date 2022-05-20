@@ -23,9 +23,6 @@ data_atual = data_atual.strftime('%d-%m-%Y')
 #Pegar nome do Usuário
 usuario = os.environ.get('USERNAME')
 
-#Caminho Relatório Baixado
-pathOrigem = rf"C:\Users\{usuario}\Downloads\relatório_automação_crédito_{data_atual}.xlsx"
-
 #Ajustar Downloads Antes de Rodar o Código
 try: 
     try:
@@ -95,7 +92,9 @@ def downloadRelatorio(linkRelatorio):
     sleep(7)    
     print('Final do Processo de Download')
 
-def atualizarBase(pathOrigem, pathDestino):
+def atualizarBase(pathDestino):
+    #Caminho Relatório Baixado
+    pathOrigem = rf"C:\Users\{usuario}\Downloads\relatório_automação_crédito_{data_atual}.xlsx"
     sleep(5)
     base = xl.load_workbook(pathOrigem, data_only=True)
     origem = base["Report"]
@@ -125,17 +124,11 @@ def atualizarBase(pathOrigem, pathDestino):
 #################  FINAL FUNÇÕES DO SCRIPT ###################
 
 fazerLogin()
-sleep(5)
-downloadRelatorio('https://app.pipefy.com/pipes/301487926/reports_v2/300284180')
-sleep(5)
+pathOrigem = rf"C:\Users\{usuario}\Downloads\relatório_automação_crédito_{data_atual}.xlsx"
 
-#Caminho Base Bacen
-pathDestino = r'G:\Drives compartilhados\Pontte\Operações\Projetos\Automação de Crédito\Casos_Analise_Bacen\Base_Casos.xlsx'
-
-atualizarBase(pathOrigem, pathDestino)
-
-#Excluir Arquivo da Pasta Download
-try: 
-    os.remove(pathOrigem)
-except:
-    pass
+def finalAtualizacao():
+    #Excluir Arquivo da Pasta Download
+    try: 
+        os.remove(pathOrigem)
+    except:
+        pass
