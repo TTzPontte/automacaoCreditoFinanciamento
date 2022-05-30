@@ -53,7 +53,7 @@ def fazerLogin():
 
     #### Inicio Processo de Login ####
 
-    #Identifica e retorna os elementos
+    #Identifica e retorna os elementoss
     print('Inicio do processo de login')
     inserirEmail_element = driver.find_element_by_name('username')
     inseirSenha_element =  driver.find_element_by_name('password')

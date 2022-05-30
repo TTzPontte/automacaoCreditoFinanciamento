@@ -33,7 +33,7 @@ def fazerLogin():
     inseirSenha_element =  driver.find_element_by_name('password')
     entrar_element =  driver.find_element_by_name('submit')
 
-    #InserirValores
+    #InserirValoress
     inserirEmail_element.send_keys('opscontrole@pontte.com.br')
     inseirSenha_element.send_keys('Pontteops22')
     
