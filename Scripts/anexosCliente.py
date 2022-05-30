@@ -29,8 +29,8 @@ def fazerLogin():
     inseirSenha_element =  driver.find_element_by_name('password')
     entrar_element =  driver.find_element_by_name('submit')
     #InserirValores
-    inserirEmail_element.send_keys('matheus.pereira@pontte.com.br')
-    inseirSenha_element.send_keys('Pontte2000')
+    inserirEmail_element.send_keys('opscontrole@pontte.com.br')
+    inseirSenha_element.send_keys('Pontteops22')
     print('login realizado')
 
     #Clicar
