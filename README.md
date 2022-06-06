@@ -11,3 +11,5 @@ pip install shutil <br/>
 pip install selenium <br/>
 pip install openpyxl <br/>
 pip install matplotlib <br/>
+pip install beautifulsoup4 <br/>
+pip install PyPDF2 <br/>
