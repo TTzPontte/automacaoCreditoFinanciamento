@@ -7,7 +7,7 @@ G:\Drives compartilhados\Pontte\Operações\Projetos\Automação de Crédito\Cas
 
 ### Bibibliotecas necessarias 
 pip install pandas <br/>
-pip install shutil <br/>
+pip install pytest-shutil <br/>
 pip install selenium <br/>
 pip install openpyxl <br/>
 pip install matplotlib <br/>
