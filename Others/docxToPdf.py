@@ -9,7 +9,7 @@ def convertDocxToPDF(path):
     for file in docx_files:
         file = os.path.join(path, file)
         i = i + 1
-        convert(file, rf'C:\Users\Matheus\Desktop\Finanças P3\teste{i}.pdf')
+        convert(file, os.path.join(path, f"PDF{1}.pdf"))
     
     mergePDF(path)
 
@@ -23,9 +23,9 @@ def mergePDF(pathImovel):
         pathFile = pathImovel+ f"\{filename}"
         os.remove(pathFile)
 
-    merger.write(os.path.join(files_dir, "Colas Mágicas.pdf"))
+    merger.write(os.path.join(files_dir, "exportMergePDF.pdf"))
 
 
-folderPath = r'C:\Users\Matheus\Desktop\Finanças P3'
+folderPath = r'pathAqui'
 
 convertDocxToPDF(folderPath)
