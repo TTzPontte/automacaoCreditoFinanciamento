@@ -1,9 +1,6 @@
 import pandas as pd
 import json
 
-#arquivoJson = r"G:\Drives compartilhados\Pontte\Operações\Projetos\Automação de Crédito\Json\FERNANDOMAGNODEOLIVEIRACASTRO-28142050803-2022-05-27.json"
-#arquivoJson = r"G:\Drives compartilhados\Pontte\Operações\Projetos\Automação de Crédito\Json\AdrianaChagasAlao-93165790663-2022-03-29.json"
-
 def extrairNomeCliente(arquivo):
     with open(arquivo, encoding='utf-8') as file:
         data = json.load(file)
@@ -81,29 +78,10 @@ def extrairDividasJson(arquivo):
     df.columns = ["nome", 'categoria', 'vencimento', 'tipoDivida', 'nomeDivida', 'valor']
 
     #Criar Novo DF
-    newDF = df.groupby(['tipoDivida','nomeDivida'])['valor'].sum().unstack('tipoDivida').reset_index().fillna(0)
+    newDF = df.groupby(['nome','tipoDivida','nomeDivida', 'vencimento'])['valor'].sum().unstack('vencimento').reset_index().fillna(0)
     newDF = pd.DataFrame(newDF)
-
-    #Contruir DataFrame de Saída
-    newDF2 = pd.DataFrame(newDF['nomeDivida'])
-    try:
-        newDF2['Vencido'] = newDF['Vencido']
-    except:
-        newDF2['Vencido'] = 0
-    try:
-        newDF2['Prejuizo'] = newDF['Prejuizo']
-    except:
-        newDF2['Prejuizo'] = 0
-    try:
-        newDF2['Em dia'] = newDF['A vencer']
-    except:
-        newDF2['Em dia'] = 0
-    try:
-        newDF2['Limite'] = newDF['Limite de Credito']
-    except:
-        newDF2['Limite'] = 0
     
-    return newDF2
+    return newDF
 
 #Funções DE-PARA
 
@@ -149,3 +127,4 @@ def tempoDivida(y):
         y = 'A vencer: acima de 361 dias.'    
     #Retornar Valor
     return y
+

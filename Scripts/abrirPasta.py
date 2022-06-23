@@ -1,5 +1,6 @@
 ### Importar libs ###
-
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 import pandas as pd
 import shutil
 import os
@@ -13,6 +14,7 @@ from anexosCliente import listarAnexos
 from baixarAnexo import baixarEMover
 from datetime import datetime
 import openpyxl as xl
+from openpyxl.worksheet.datavalidation import DataValidation
 import glob
 from baixarBase import downloadRelatorio, atualizarBase, finalAtualizacao
 sleep(14)
@@ -110,10 +112,13 @@ for i in range(0,final):
             ws = wb['Resumo']
             ws2 = wb['Avaliacao']
             #Escrever nas planilhas
-            ws["C8"].value = qtdParcelas
-            ws["C10"].value = carencia
+            ws["C8"].value = int(qtdParcelas)
+            if carencia == "Não informado" or carencia == 'Não tenho interesse' or carencia == '':
+                ws["C10"].value = 0
+            else:    
+                ws["C10"].value = carencia
             ws["C11"].value = valorLiquido
-            ws["C12"].value = 0
+            ws["C12"].value = valorImovel
             ws["C13"].value = valorImovel
             ws["C14"].value = itbi
             ws["C15"].value = tipoOps
@@ -134,7 +139,7 @@ for i in range(0,final):
             
             #Avaliacao
             ws2["F9"].value = areaImovel
-
+            
             #Salvar e Fechar
             wb.save(pathSpreadSheet)
             wb.close()
