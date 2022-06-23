@@ -17,6 +17,7 @@ import openpyxl as xl
 from openpyxl.worksheet.datavalidation import DataValidation
 import glob
 from baixarBase import downloadRelatorio, atualizarBase, finalAtualizacao
+from preencherBacen import gravarBacenSimulador
 sleep(14)
 
 ### Funçoes ###
@@ -103,10 +104,22 @@ for i in range(0,final):
         
         baixarEMover(destino, dict, nomeCompleto, cpf, nomeComporRenda, cpfComporRenda)
 
+        #Caminho do Simulador
+        pathSpreadSheet = glob.glob(destino+"\*.xlsm") #Pegar Caminho do Simulador dentro da pasta do cliente
+        pathSpreadSheet = pathSpreadSheet[0] #Transformar de Lista ---> STR
+        
+        #Preencher Bacen
+        pathBacen = rf'G:\Drives compartilhados\Pontte\Operações\Projetos\Automação de Crédito\Simulação\{nomeCompleto} - {codigoPipefy}\Crédito\Bacen'
+        pathSimulador = pathSpreadSheet
+        try:
+            gravarBacenSimulador(pathBacen, pathSimulador)
+        except:
+            print('Erro ao gravar BACEN')
+        
+        sleep(2)
+
         #Manipulação do simulador do Excel
         try:
-            pathSpreadSheet = glob.glob(destino+"\*.xlsm") #Pegar Caminho do Simulador dentro da pasta do cliente
-            pathSpreadSheet = pathSpreadSheet[0] #Transformar de Lista ---> STR
             wb = xl.load_workbook(pathSpreadSheet, read_only=False, keep_vba=True) #Carregar a planilha
             #Abrir Abas
             ws = wb['Resumo']
