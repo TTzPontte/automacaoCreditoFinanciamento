@@ -20,11 +20,16 @@ def transformImageToPDF(path):
 def mergePDF(pathImovel):
     files_dir = pathImovel
     pdf_files = [f for f in os.listdir(files_dir) if f.endswith("pdf")]
+    qtd_PDF = len(pdf_files)
     merger = PdfFileMerger()
 
-    for filename in pdf_files:
-        merger.append(PdfFileReader(os.path.join(files_dir, filename), "rb"))
-        pathFile = pathImovel+ f"\{filename}"
-        os.remove(pathFile)
+    if qtd_PDF >0:
 
-    merger.write(os.path.join(files_dir, "Fotos do Imovel.pdf"))
+        for filename in pdf_files:
+            merger.append(PdfFileReader(os.path.join(files_dir, filename), "rb"))
+            pathFile = pathImovel+ f"\{filename}"
+            os.remove(pathFile)
+
+        merger.write(os.path.join(files_dir, "Fotos do Imovel.pdf"))
+    else:
+        print('Não tem foto do imóvel')
