@@ -82,22 +82,22 @@ def baixarEMover(pathDestino, dict, nome1, cpf1, nome2, cpf2):
                     transformImageToPDF(destino)
             #Novos
             elif nomeChave == 'Contrato Social' or nomeChave == 'Extrato Bancário Últimos 6 Meses (PJ) (Restored)':
-                destino = pathDestino + "\Crédito\Documentos empresa" + f"\{nomeArquivo}"
+                destino = pathDestino + "\Crédito\Renda\PJ" + f"\{nomeArquivo}"
                 shutil.move(origem,destino)
                 if ".png" in destino or ".jpeg" in destino or ".jpg" in destino:
                     transformImageToPDF(destino)
             elif nomeChave == 'Faturamento 3 anos':
-                destino = pathDestino + "\Crédito\Documentos empresa" + f"\{nomeArquivo}"
+                destino = pathDestino + "\Crédito\Renda\PJ" + f"\{nomeArquivo}"
                 shutil.move(origem,destino)
                 if ".png" in destino or ".jpeg" in destino or ".jpg" in destino:
                     transformImageToPDF(destino)
             elif nomeChave == 'Balanço Patrimonial 3 anos':
-                destino = pathDestino + "\Crédito\Documentos empresa" + f"\{nomeArquivo}"
+                destino = pathDestino + "\Crédito\Renda\PJ" + f"\{nomeArquivo}"
                 shutil.move(origem,destino)
                 if ".png" in destino or ".jpeg" in destino or ".jpg" in destino:
                     transformImageToPDF(destino)
             elif nomeChave == 'DRE 3 anos':
-                destino = pathDestino + "\Crédito\Documentos empresa" + f"\{nomeArquivo}"
+                destino = pathDestino + "\Crédito\Renda\PJ" + f"\{nomeArquivo}"
                 shutil.move(origem,destino)
                 if ".png" in destino or ".jpeg" in destino or ".jpg" in destino:
                     transformImageToPDF(destino)
