@@ -129,7 +129,7 @@ for i in range(0,final):
             if carencia == "Não informado" or carencia == 'Não tenho interesse' or carencia == '':
                 ws["C10"].value = 0
             else:    
-                ws["C10"].value = carencia
+                ws["C10"].value = int(carencia)
             ws["C11"].value = valorLiquido
             ws["C12"].value = valorImovel
             ws["C13"].value = valorImovel
