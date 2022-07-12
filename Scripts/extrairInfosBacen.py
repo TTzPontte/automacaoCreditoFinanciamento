@@ -4,11 +4,8 @@ import json
 def extrairNomeCliente(arquivo):
     with open(arquivo, encoding='utf-8') as file:
         data = json.load(file)
-        data3 = data['signers']
-    
-    for x in data3:
-        nome = x['name']
-    
+        nome = data['subject_name']
+      
     return nome
 
 def extrairDividasJson(arquivo):
