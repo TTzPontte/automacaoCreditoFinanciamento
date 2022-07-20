@@ -46,9 +46,10 @@ def extrairDividasJson(arquivo):
     listaDivida = []
 
     #Extrair nome do cliente
-    for x in data3:
-        nome = x['name']
-        nomeCliente.append(nome)
+    # for x in data3:
+    #     nome = x['name']        # Testando (Matheus Pereira)
+    nome = data['subject_name']
+    nomeCliente.append(nome)
 
     #Extrair e preencher nas listas
     for i in conteudo['operation_items']:
