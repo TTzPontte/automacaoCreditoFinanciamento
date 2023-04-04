@@ -1,15 +1,11 @@
-# automacaoCreditoFinanciamento
-Automação Financiamento - Abrir Pastas e Preencher Simulador
+# Automacao Credito
 
-### Diretórios para conferências
-G:\Drives compartilhados\Pontte\Operações\Projetos\Automação de Crédito\Simulação <br/>
-G:\Drives compartilhados\Pontte\Operações\Projetos\Automação de Crédito\Casos_Analise_Bacen
+Realiza a criação da pasta do cliente de forma padronizada e insere dentro da pasta um script que baixa os documentos da operação diretamente do card e preenche o bacen no simulador
 
-### Bibibliotecas necessarias 
-pip install pandas <br/>
-pip install pytest-shutil <br/>
-pip install selenium <br/>
-pip install openpyxl <br/>
-pip install matplotlib <br/>
-pip install beautifulsoup4 <br/>
-pip install PyPDF2 <br/>
+
+## Caminho das planilhas do google shets que estão linkadas no pluga
+
+G:\Drives compartilhados\Pontte\Operações\Projetos\Automações Google Sheets
+
+
+
