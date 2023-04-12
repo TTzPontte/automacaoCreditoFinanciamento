@@ -1,6 +1,7 @@
 import pandas as pd
 import json
-
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def extrairNomeCliente(arquivo):
     try:
@@ -31,15 +32,13 @@ def extrairDividasJson(arquivo):
         
         #Selecionar a última data observada no json
         tamanhoLista=  len(listaData)
-        extList = listaData[-2]
+        extList = listaData[0]
         
         #Extrair Bloco que contém a última data observada no json
         teste = ''
         for line in data2:
             if 'reference_date' in line:
                 if line['reference_date'] == extList:
-                    teste = line['reference_date']
-                elif teste == extList:
                     teste = 1
                 elif teste == 1:
                     teste = 0
@@ -63,18 +62,21 @@ def extrairDividasJson(arquivo):
             listaTipo.append(i['domain_description'])
             listaGrupo.append(i['domain_group'])
             listaDivida.append(i['submodality_description'])
-            listaValor.append(i['value'])
+            listaValor.append((i['value'])/100)
         
         #Criar listas aplicando os DE-PARA's
         vencimentoDivida = []
         nomeDividas = []
+        tipoDividas = []
         for itemList in listaTipo:
             vencimentoDivida.append(tempoDivida(itemList))
         for nomeDivida in listaDivida:
-            nomeDividas.append(deParaDividas(nomeDivida))
+            nomeDividas.append(deParaDividas(nomeDivida))              
+        for tipoDivida in listaGrupo:
+            tipoDividas.append(deParaTipoDivida(tipoDivida))
 
         #Criar uma lista única (Pré Criação do DF)
-        listaUnica = list(zip(listaCategoria, vencimentoDivida, listaGrupo, nomeDividas, listaValor))
+        listaUnica = list(zip(listaCategoria, vencimentoDivida, tipoDividas, nomeDividas, listaValor))
 
         #Criar Data Frame
         df = pd.DataFrame(listaUnica, columns=[['Categoria', 'Tipo', 'Grupo', 'Nome da Dívida', 'Valor']], index=None)
@@ -139,6 +141,7 @@ def extrairDividasJson(arquivo):
         #Criar listas aplicando os DE-PARA's
         vencimentoDivida = []
         nomeDividas = []
+
         for itemList in listaTipo:
             vencimentoDivida.append(tempoDivida(itemList))
         
@@ -197,14 +200,27 @@ def deParaDividas(x):
     return x
 
 def tempoDivida(y):
-    if 'a vencer até 30 dias' in y:
+    if 'a vencer até 30 dias' in y or 'vencidos de 15 a 30 dias' in y:
         y = 'A vencer, próx 30 dias.'
     elif 'a vencer de 31 a 60 dias' in y or 'a vencer de 61 a 90 dias' in y or 'a vencer de 91 a 180 dias' in y or 'Créditos a vencer de 181 a 360 dias' in y:
+        y = 'A vencer: 31 a 360 dias.'
+    elif 'vencidos de 31 a 60 dias' in y or 'vencidos de 61 a 90 dias' in y or 'vencidos de 91 a 120 dias' in y or 'vencidos de 121 a 150 dias' in y or 'vencidos de 151 a 180 dias' in y:
+        y = 'A vencer: 31 a 360 dias.'
+    elif 'vencidos de 181 a 240 dias' in y or 'vencidos de 241 a 300 dias' in y or 'vencidos de 301 a 360 dias' in y:
         y = 'A vencer: 31 a 360 dias.'
     else:
         y = 'A vencer: acima de 361 dias.'    
     #Retornar Valor
     return y
+
+def deParaTipoDivida(y):
+    if 'Créditos a vencer' in y:
+        y = 'A Vencer'
+    elif 'Créditos vencidos' in y:
+        y = 'Vencido'
+    else:
+        y = y
+    return y 
 
 def createDF(scr_data_teste, name):
     import pandas as pd
@@ -231,7 +247,7 @@ def createDF(scr_data_teste, name):
                 submodality_description = item['submodality_description']
                 domain_group = item['domain_group']
                 domain_description = item['domain_description']
-                value = item['value']
+                value = (item['value'])/100
             except:
                 modality_description = item['category_sub']['category']['category_description']
                 submodality_description = item['category_sub']['description']
