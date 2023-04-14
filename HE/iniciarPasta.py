@@ -53,8 +53,8 @@ with open("dadosOp-v1.json", encoding='utf-8') as meu_json:
     dados = json.load(meu_json)
 
 try:
-    pasta_cliente = rf"G:\Drives compartilhados\Pontte\Operações\Projetos\Automação de Crédito\Simulação HE\{dados['nomeCompleto']}- ID {dados['idCliente']}"
-    pasta_bacen = rf"G:\Drives compartilhados\Pontte\Operações\Projetos\Automação de Crédito\Simulação HE\{dados['nomeCompleto']}- ID {dados['idCliente']}\Crédito\Bacen"
+    pasta_cliente = os.path.dirname(os.getcwd()).replace("\Scripts\Config", "")
+    pasta_bacen = os.path.dirname(os.getcwd()).replace("\Scripts\Config", "") + "\Crédito\Bacen"
 except:
     print(Fore.RED+"!! Erro no Diretório ou Nome da Pasta !!"+Style.RESET_ALL)
 
