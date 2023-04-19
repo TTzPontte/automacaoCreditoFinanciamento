@@ -21,15 +21,26 @@ def gravarBacenSimulador(pathBacens, pathSimulador):
     for file in bacen_files:
         
         varTesteCliente = os.path.join(files_dir, file)
-        df = extrairDividasJson(varTesteCliente)
+        df1 = extrairDividasJson(varTesteCliente)
 
         #Verificar se BACEN tem conteúdo
-        if len(df) > 0:
+        if len(df1) > 0:
             df = extrairDividasJson(varTesteCliente)
             results = pd.concat([results, df], axis=0).reset_index(drop=True)
 
+
     #Tratar nan
     results = results.fillna(0)
+    colunas = list(df.columns)
+
+    if not 'A vencer, próx 30 dias.'in colunas:
+        results['A vencer, próx 30 dias.'] = 0
+    if not 'A vencer: 31 a 360 dias.'in colunas:
+        results['A vencer: 31 a 360 dias.'] = 0
+    if not 'A vencer: acima de 361 dias.'in colunas:
+        results['A vencer: acima de 361 dias.'] = 0
+
+    results = results[['nome', 'tipoDivida', 'nomeDivida', 'A vencer, próx 30 dias.', 'A vencer: 31 a 360 dias.', 'A vencer: acima de 361 dias.']]
 
 
     wb = xlwings.Book(planilhaExcel)

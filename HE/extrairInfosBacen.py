@@ -1,168 +1,178 @@
 import pandas as pd
 import json
 import warnings
+from colorama import Fore, Back, Style, init
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def extrairNomeCliente(arquivo):
     try:
-        with open(arquivo, encoding='utf-8') as file:
-            data = json.load(file)
-            nome = data['analysis_output']['scr']['name']
-        
-        return nome
-    except:
-        with open(arquivo, encoding='utf-8') as file:
-            data = json.load(file)
-            nome = data['subject_name']
+        try:
+            with open(arquivo, encoding='utf-8') as file:
+                data = json.load(file)
+                nome = data['analysis_output']['scr']['name']
+            
+            return nome
+        except:
+            with open(arquivo, encoding='utf-8') as file:
+                data = json.load(file)
+                nome = data['subject_name']
     
-        return nome
+            return nome
+    except:
+        print(Fore.RED+f"O Arquivo **{arquivo}** esta vazio ou diferente do padrão."+Style.RESET_ALL)
+        pass
 
 def extrairDividasJson(arquivo):
     try:
-        with open(arquivo, encoding='utf-8') as file:
-            data = json.load(file)
-            data2 = data['analysis_output']['scr']['scr_data']
-            data3 = data['analysis_output']['scr']['signers']
-        
-        #Listar todas as datas mostradas no Json
-        listaData = []
-        for line in data2:
-            if 'reference_date' in line:
-                listaData.append(line['reference_date'])
-        
-        #Selecionar a última data observada no json
-        tamanhoLista=  len(listaData)
-        extList = listaData[0]
-        
-        #Extrair Bloco que contém a última data observada no json
-        teste = ''
-        for line in data2:
-            if 'reference_date' in line:
-                if line['reference_date'] == extList:
-                    teste = 1
-                elif teste == 1:
-                    teste = 0
-            if teste == 1:
-                conteudo = line
-        
-        #Criar Listas Vazias para receber valores do Json
-        nomeCliente = []
-        listaCategoria = []
-        listaTipo = []
-        listaGrupo = []
-        listaValor = []
-        listaDivida = []
+        print("********* "+ arquivo)
+        try:
+            with open(arquivo, encoding='utf-8') as file:
+                data = json.load(file)
+                data2 = data['analysis_output']['scr']['scr_data']
+                data3 = data['analysis_output']['scr']['signers']
+            
+            #Listar todas as datas mostradas no Json
+            listaData = []
+            for line in data2:
+                if 'reference_date' in line:
+                    listaData.append(line['reference_date'])
+            
+            #Selecionar a última data observada no json
+            tamanhoLista=  len(listaData)
+            extList = listaData[0]
+            
+            #Extrair Bloco que contém a última data observada no json
+            teste = ''
+            for line in data2:
+                if 'reference_date' in line:
+                    if line['reference_date'] == extList:
+                        teste = 1
+                    elif teste == 1:
+                        teste = 0
+                if teste == 1:
+                    conteudo = line
+            
+            #Criar Listas Vazias para receber valores do Json
+            nomeCliente = []
+            listaCategoria = []
+            listaTipo = []
+            listaGrupo = []
+            listaValor = []
+            listaDivida = []
 
-        nome = data['analysis_output']['scr']['name']
-        nomeCliente.append(nome)
+            nome = data['analysis_output']['scr']['name']
+            nomeCliente.append(nome)
 
-        #Extrair e preencher nas listas
-        for i in conteudo['operation_items']:
-            listaCategoria.append(i['modality_description'])
-            listaTipo.append(i['domain_description'])
-            listaGrupo.append(i['domain_group'])
-            listaDivida.append(i['submodality_description'])
-            listaValor.append((i['value'])/100)
-        
-        #Criar listas aplicando os DE-PARA's
-        vencimentoDivida = []
-        nomeDividas = []
-        tipoDividas = []
-        for itemList in listaTipo:
-            vencimentoDivida.append(tempoDivida(itemList))
-        for nomeDivida in listaDivida:
-            nomeDividas.append(deParaDividas(nomeDivida))              
-        for tipoDivida in listaGrupo:
-            tipoDividas.append(deParaTipoDivida(tipoDivida))
+            #Extrair e preencher nas listas
+            for i in conteudo['operation_items']:
+                listaCategoria.append(i['modality_description'])
+                listaTipo.append(i['domain_description'])
+                listaGrupo.append(i['domain_group'])
+                listaDivida.append(i['submodality_description'])
+                listaValor.append((i['value'])/100)
+            
+            #Criar listas aplicando os DE-PARA's
+            vencimentoDivida = []
+            nomeDividas = []
+            tipoDividas = []
+            for itemList in listaTipo:
+                vencimentoDivida.append(tempoDivida(itemList))
+            for nomeDivida in listaDivida:
+                nomeDividas.append(deParaDividas(nomeDivida))              
+            for tipoDivida in listaGrupo:
+                tipoDividas.append(deParaTipoDivida(tipoDivida))
 
-        #Criar uma lista única (Pré Criação do DF)
-        listaUnica = list(zip(listaCategoria, vencimentoDivida, tipoDividas, nomeDividas, listaValor))
+            #Criar uma lista única (Pré Criação do DF)
+            listaUnica = list(zip(listaCategoria, vencimentoDivida, tipoDividas, nomeDividas, listaValor))
 
-        #Criar Data Frame
-        df = pd.DataFrame(listaUnica, columns=[['Categoria', 'Tipo', 'Grupo', 'Nome da Dívida', 'Valor']], index=None)
-        df.insert(0,"Nome do Cliente", nomeCliente[0])
-        df.columns = ["nome", 'categoria', 'vencimento', 'tipoDivida', 'nomeDivida', 'valor']
+            #Criar Data Frame
+            df = pd.DataFrame(listaUnica, columns=[['Categoria', 'Tipo', 'Grupo', 'Nome da Dívida', 'Valor']], index=None)
+            df.insert(0,"Nome do Cliente", nomeCliente[0])
+            df.columns = ["nome", 'categoria', 'vencimento', 'tipoDivida', 'nomeDivida', 'valor']
 
-        #Criar Novo DF
-        newDF = df.groupby(['nome','tipoDivida','nomeDivida', 'vencimento'])['valor'].sum().unstack('vencimento').reset_index().fillna(0)
-        newDF = pd.DataFrame(newDF)
-        #Gerar Excel - Bacen
-        createDF(data2, nome)
-        return newDF
+            #Criar Novo DF
+            newDF = df.groupby(['nome','tipoDivida','nomeDivida', 'vencimento'])['valor'].sum().unstack('vencimento').reset_index().fillna(0)
+            newDF = pd.DataFrame(newDF)
+            #Gerar Excel - Bacen
+            createDF(data2, nome)
+            return newDF
 
+        except:
+            with open(arquivo, encoding='utf-8') as file:
+                data = json.load(file)
+                data2 = data['scr_data']
+                data3 = data['signers']
+            
+            #Listar todas as datas mostradas no Json
+            listaData = []
+            for line in data2:
+                if 'reference_date' in line:
+                    listaData.append(line['reference_date'])
+            
+            #Selecionar a última data observada no json
+            tamanhoLista=  len(listaData)
+            extList = listaData[-2]
+            
+            #Extrair Bloco que contém a última data observada no json
+            teste = ''
+            for line in data2:
+                if 'reference_date' in line:
+                    if line['reference_date'] == extList:
+                        teste = line['reference_date']
+                    elif teste == extList:
+                        teste = 1
+                    elif teste == 1:
+                        teste = 0
+                if teste == 1:
+                    conteudo = line
+            
+            #Criar Listas Vazias para receber valores do Json
+            nomeCliente = []
+            listaCategoria = []
+            listaTipo = []
+            listaGrupo = []
+            listaValor = []
+            listaDivida = []
+
+            nome = data['subject_name']
+            nomeCliente.append(nome)
+
+            #Extrair e preencher nas listas
+            for i in conteudo['operation_items']:
+                listaCategoria.append(i['category_sub']['category']['category_description'])
+                listaTipo.append(i['due_type']['description'])
+                listaGrupo.append(i['due_type']['due_type_group'])
+                listaDivida.append(i['category_sub']['description'])
+                listaValor.append(i['due_value'])
+            
+            #Criar listas aplicando os DE-PARA's
+            vencimentoDivida = []
+            nomeDividas = []
+
+            for itemList in listaTipo:
+                vencimentoDivida.append(tempoDivida(itemList))
+            
+            for nomeDivida in listaDivida:
+                nomeDividas.append(deParaDividas(nomeDivida))
+
+            #Criar uma lista única (Pré Criação do DF)
+            listaUnica = list(zip(listaCategoria, vencimentoDivida, listaGrupo, nomeDividas, listaValor))
+            
+            #Criar Data Frame
+            df = pd.DataFrame(listaUnica, columns=[['Categoria', 'Tipo', 'Grupo', 'Nome da Dívida', 'Valor']], index=None)
+            df.insert(0,"Nome do Cliente", nomeCliente[0])
+            df.columns = ["nome", 'categoria', 'vencimento', 'tipoDivida', 'nomeDivida', 'valor']
+
+            #Criar Novo DF
+            newDF = df.groupby(['nome','tipoDivida','nomeDivida', 'vencimento'])['valor'].sum().unstack('vencimento').reset_index().fillna(0)
+            newDF = pd.DataFrame(newDF)
+
+            #Gerar Excel - Bacen
+            createDF(data2, nome)
+            return newDF
     except:
-        with open(arquivo, encoding='utf-8') as file:
-            data = json.load(file)
-            data2 = data['scr_data']
-            data3 = data['signers']
-        
-        #Listar todas as datas mostradas no Json
-        listaData = []
-        for line in data2:
-            if 'reference_date' in line:
-                listaData.append(line['reference_date'])
-        
-        #Selecionar a última data observada no json
-        tamanhoLista=  len(listaData)
-        extList = listaData[-2]
-        
-        #Extrair Bloco que contém a última data observada no json
-        teste = ''
-        for line in data2:
-            if 'reference_date' in line:
-                if line['reference_date'] == extList:
-                    teste = line['reference_date']
-                elif teste == extList:
-                    teste = 1
-                elif teste == 1:
-                    teste = 0
-            if teste == 1:
-                conteudo = line
-        
-        #Criar Listas Vazias para receber valores do Json
-        nomeCliente = []
-        listaCategoria = []
-        listaTipo = []
-        listaGrupo = []
-        listaValor = []
-        listaDivida = []
-
-        nome = data['subject_name']
-        nomeCliente.append(nome)
-
-        #Extrair e preencher nas listas
-        for i in conteudo['operation_items']:
-            listaCategoria.append(i['category_sub']['category']['category_description'])
-            listaTipo.append(i['due_type']['description'])
-            listaGrupo.append(i['due_type']['due_type_group'])
-            listaDivida.append(i['category_sub']['description'])
-            listaValor.append(i['due_value'])
-        
-        #Criar listas aplicando os DE-PARA's
-        vencimentoDivida = []
-        nomeDividas = []
-
-        for itemList in listaTipo:
-            vencimentoDivida.append(tempoDivida(itemList))
-        
-        for nomeDivida in listaDivida:
-            nomeDividas.append(deParaDividas(nomeDivida))
-
-        #Criar uma lista única (Pré Criação do DF)
-        listaUnica = list(zip(listaCategoria, vencimentoDivida, listaGrupo, nomeDividas, listaValor))
-        
-        #Criar Data Frame
-        df = pd.DataFrame(listaUnica, columns=[['Categoria', 'Tipo', 'Grupo', 'Nome da Dívida', 'Valor']], index=None)
-        df.insert(0,"Nome do Cliente", nomeCliente[0])
-        df.columns = ["nome", 'categoria', 'vencimento', 'tipoDivida', 'nomeDivida', 'valor']
-
-        #Criar Novo DF
-        newDF = df.groupby(['nome','tipoDivida','nomeDivida', 'vencimento'])['valor'].sum().unstack('vencimento').reset_index().fillna(0)
-        newDF = pd.DataFrame(newDF)
-
-        #Gerar Excel - Bacen
-        createDF(data2, nome)
-        return newDF
+        print(Fore.YELLOW+f"O Arquivo **{arquivo}** esta vazio ou diferente do padrão."+Style.RESET_ALL)
+        return []
 
 #Funções DE-PARA
 
